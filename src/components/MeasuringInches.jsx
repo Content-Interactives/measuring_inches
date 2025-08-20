@@ -6,12 +6,7 @@ import { Container } from './ui/reused-ui/Container.jsx'
 import ObjectCarousel from './Objects.jsx'
 
 // Assets Imports
-import Flexi_Faceplant from './assets/flexi_faceplant.png'
-import Flexi_Excited from './assets/flexi_excited.png'
-import Flexi_Hello from './assets/flexi_hello.png'
-import Flexi_Hey from './assets/flexi_hey.png'
 import Flexi_Stars from './assets/flexi_stars.png'
-import Flexi_ThumbsUp from './assets/flexi_thumbsup.png'
 import Flexi_Confused from './assets/flexi_confused.png'
 import Flexi_Wave from './assets/flexi_wave.png'
 
