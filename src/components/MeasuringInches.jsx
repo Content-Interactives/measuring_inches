@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 
 // UI Components Imports
 import { Container } from './ui/reused-ui/Container.jsx'
-import Objects from './Objects.jsx'
+import ObjectCarousel from './Objects.jsx'
 
 // Assets Imports
 import Flexi_Faceplant from './assets/flexi_faceplant.png'
@@ -46,25 +46,23 @@ const MeasuringInches = () => {
                 showSoundButton={true}
                 onSound={null}
         >
-            <div className='h-[100%] flex flex-col items-center space-between'>
-                <div className='text-center text-sm text-gray-500 p-5'>
+            <div className='h-[100%] min-h-0 flex flex-col items-stretch'>
+                <div className='w-full text-center text-sm text-gray-500 p-5 pb-0'>
                     Flexi needs your help to find what he's looking for! Measure the objects to find the right length that Flexi remembers the item being!
                 </div>
 
-                <div className="w-[100%] relative left-[50%] translate-x-[-50%] grid grid-cols-2 gap-5">
-                    {Objects.map((Object, index) => (
-                        <Object key={index} />
-                    ))}
+                <div className="w-[100%] flex-1 min-h-0 z-20">
+                    <ObjectCarousel />
                 </div>
 
-                <div className='relative bottom-[0%] w-[100%] ml-[-3%] flex flex-row items-center gap-3'>
+                <div className='relative w-[100%] ml-[-3%] flex flex-row items-center gap-3'>
                     <img 
                         src={Flexi_Confused} 
                         alt="Flexi Confused" 
-                        className='w-[70px] ml-[5%] mt-3' 
+                        className='w-[70px] ml-[5%] mt-0' 
                         />
                     <div className='text-[#FF7B00] font-extrabold text-sm'>
-                        I'm looking for something that is 3 inches long. Can you help me find it?
+                        I'm looking for something that is about 3 inches long. Can you help me find it?
                     </div>
                 </div>
             </div>
