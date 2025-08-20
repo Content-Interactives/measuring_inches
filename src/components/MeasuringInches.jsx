@@ -13,31 +13,65 @@ import Flexi_Hey from './assets/flexi_hey.png'
 import Flexi_Stars from './assets/flexi_stars.png'
 import Flexi_ThumbsUp from './assets/flexi_thumbsup.png'
 import Flexi_Confused from './assets/flexi_confused.png'
-
-const placedItems = () => {
-    // Simple shuffle
-    const shuffled = [...OBJECT_CATALOG];
-    for (let i = shuffled.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-
-    // Choose up to 4 and assign positions (percent-based)
-    const positions = [
-        { left: 22, top: 34 },
-        { left: 22, top: 56 },
-        { left: 78, top: 54 },
-        { left: 78, top: 34 },
-    ];
-
-    return shuffled.slice(0, 4).map((item, index) => ({
-        ...item,
-        position: positions[index] || { left: 10 + index * 15, top: 10 + index * 18 },
-    }));
-}
+import Flexi_Wave from './assets/flexi_wave.png'
 
 const MeasuringInches = () => {
+    // State Management
+    const [objects, setObjects] = useState();
+    const [answer, setAnswer] = useState();
+    const [flexiMessage, setFlexiMessage] = useState();
+    const [flexiImg, setFlexiImg] = useState(Flexi_Wave);
+    const [messageLockedUntil, setMessageLockedUntil] = useState(0);
+    const [round, setRound] = useState(0);
+    const isConfused = flexiImg === Flexi_Confused;
 
+    const setFlexiMessageGuarded = (msg) => {
+        if (Date.now() < messageLockedUntil) return;
+        setFlexiMessage(msg);
+    };
+
+    const handleObjectClick = (key, inches) => {
+        if (answer == null) return;
+        if (inches !== answer) {
+            setFlexiImg(Flexi_Confused);
+            return;
+        }
+        // Correct answer: show stars and fire confetti for 3 seconds and lock celebratory message
+        setFlexiImg(Flexi_Stars);
+        const successMessages = [
+            "That's the one!",
+            'Thanks for finding it!',
+            'You got it!',
+            'Perfect! I was looking for that!',
+            'Exactly! That\'s it!'
+        ];
+        const duration = 3000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 300 };
+        const randomInRange = (min, max) => Math.random() * (max - min) + min;
+        const celebrationMsg = successMessages[Math.floor(Math.random() * successMessages.length)];
+        setFlexiMessage(celebrationMsg);
+        setMessageLockedUntil(animationEnd);
+        const interval = setInterval(() => {
+            const timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                return;
+            }
+            const particleCount = Math.round(50 * (timeLeft / duration));
+            confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+            confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+        }, 250);
+        setTimeout(() => {
+            setMessageLockedUntil(0);
+            setFlexiMessage(undefined);
+            setFlexiImg(Flexi_Wave);
+            setObjects(undefined);
+            setAnswer(undefined);
+            setRound((r) => r + 1);
+        }, duration);
+    };
+    
 	return (
         <Container 
                 text="Measuring Inches"
@@ -52,17 +86,17 @@ const MeasuringInches = () => {
                 </div>
 
                 <div className="w-[100%] flex-1 min-h-0 z-20">
-                    <ObjectCarousel />
+                    <ObjectCarousel key={round} objects={objects} setObjects={setObjects} setAnswer={setAnswer} setFlexiMessage={setFlexiMessageGuarded} onObjectClick={handleObjectClick} />
                 </div>
 
-                <div className='relative w-[100%] ml-[-3%] flex flex-row items-center gap-3'>
+                <div className='relative w-[100%] h-[100px] ml-[-2%] flex flex-row items-center gap-3'>
                     <img 
-                        src={Flexi_Confused} 
-                        alt="Flexi Confused" 
-                        className='w-[70px] ml-[5%] mt-0' 
+                        src={flexiImg} 
+                        alt="Flexi Wave" 
+                        className={`${isConfused ? 'w-[56px]' : 'w-[70px]'} ml-[5%] mt-0`} 
                         />
                     <div className='text-[#FF7B00] font-extrabold text-sm'>
-                        I'm looking for something that is about 3 inches long. Can you help me find it?
+                        {flexiMessage ?? `I'm looking for something that is about ${answer ?? '...'} inches long. Can you help me find it?`}
                     </div>
                 </div>
             </div>
