@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
+import audio from './Measure Objects Audio.mp3';
 
 // UI Components Imports
 import { Container } from './ui/reused-ui/Container.jsx'
@@ -19,6 +20,7 @@ const MeasuringInches = () => {
     const [messageLockedUntil, setMessageLockedUntil] = useState(0);
     const [round, setRound] = useState(0);
     const isConfused = flexiImg === Flexi_Confused;
+    const audioRef = useRef(new Audio(audio));
 
     const setFlexiMessageGuarded = (msg) => {
         if (Date.now() < messageLockedUntil) return;
@@ -66,6 +68,11 @@ const MeasuringInches = () => {
             setRound((r) => r + 1);
         }, duration);
     };
+
+    const handleSoundClick = () => {
+        audioRef.current.currentTime = 0; // Reset to beginning
+        audioRef.current.play()
+    };
     
 	return (
         <Container 
@@ -73,7 +80,7 @@ const MeasuringInches = () => {
                 showResetButton={false}
                 borderColor="#FF7B00"
                 showSoundButton={true}
-                onSound={null}
+                onSound={handleSoundClick}
         >
             <div className='h-[100%] min-h-0 flex flex-col items-stretch'>
                 <div className='w-full text-center text-sm text-gray-500 p-5 pb-0'>
